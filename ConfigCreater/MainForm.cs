@@ -219,7 +219,7 @@ namespace ConfigCreater
                     var packages = filePath.Split('\\');
                     if (_sender.Send(steam, packages[packages.Length - 1]))
                     {
-                        MessageBox.Show("Успешно", "Файл успешно отправлен", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show($"Успешно\nОтправлен по пути{_sender.RemoteDirectory + "/" + packages[packages.Length - 1]}", "Файл успешно отправлен", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     else
                     {

@@ -18,6 +18,7 @@ namespace ConfigCreater
         private string _remoteDirectory = "/root/wk/measure_module/Sensors/ConfigFolder";
 
         public string Host { get => host; set => host = value; }
+        public string RemoteDirectory { get => _remoteDirectory; set => _remoteDirectory = value; }
 
         public bool Send(FileStream fileStream, string fileName)
         {
