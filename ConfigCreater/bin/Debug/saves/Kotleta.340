@@ -1,0 +1,13 @@
+Sensor Model:   Kotleta
+Serial Number:  
+Data Format:    1      (mVolts/Kelvin)
+SetPoint Limit: 325.5     (Kelvin)
+Temperature coefficient:  1 (Negative)
+Number of Breakpoints:    5
+
+No.   Units      Temperature (K)
+
+  1   1             1.000     
+  2   2             3.000     
+  3   3             4.000     
+  4   4             3.000     

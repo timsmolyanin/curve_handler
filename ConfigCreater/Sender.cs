@@ -9,7 +9,7 @@ using System.IO;
 
 namespace ConfigCreater
 {
-    internal class Sender
+    public class Sender
     {
         private string host = "";
         private string username = "root";

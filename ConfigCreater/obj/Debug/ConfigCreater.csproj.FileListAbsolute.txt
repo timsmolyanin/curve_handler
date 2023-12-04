@@ -15,7 +15,6 @@ C:\Alex\Git\curve_handler\ConfigCreater\bin\Debug\ConfigCreater.pdb
 C:\Alex\Git\curve_handler\ConfigCreater\bin\Debug\Renci.SshNet.dll
 C:\Alex\Git\curve_handler\ConfigCreater\bin\Debug\Renci.SshNet.xml
 C:\Alex\Git\curve_handler\ConfigCreater\obj\Debug\ConfigCreater.csproj.AssemblyReference.cache
-C:\Alex\Git\curve_handler\ConfigCreater\obj\Debug\ConfigCreater.Form1.resources
 C:\Alex\Git\curve_handler\ConfigCreater\obj\Debug\ConfigCreater.Properties.Resources.resources
 C:\Alex\Git\curve_handler\ConfigCreater\obj\Debug\ConfigCreater.csproj.GenerateResource.cache
 C:\Alex\Git\curve_handler\ConfigCreater\obj\Debug\ConfigCreater.csproj.CoreCompileInputs.cache
@@ -23,3 +22,4 @@ C:\Alex\Git\curve_handler\ConfigCreater\obj\Debug\ConfigCreater.csproj.CopyCompl
 C:\Alex\Git\curve_handler\ConfigCreater\obj\Debug\ConfigCreater.exe
 C:\Alex\Git\curve_handler\ConfigCreater\obj\Debug\ConfigCreater.pdb
 C:\Alex\Git\curve_handler\ConfigCreater\obj\Debug\ConfigCreater.MainForm.resources
+C:\Alex\Git\curve_handler\ConfigCreater\obj\Debug\ConfigCreater.ConnectionForm.resources

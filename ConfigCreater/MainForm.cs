@@ -7,17 +7,45 @@ namespace ConfigCreater
 {
     public partial class MainForm : Form
     {
-
+        private static readonly string START_DIR = $@"{Environment.CurrentDirectory}\saves\";
         private Config _config = new Config();
         private Sender _sender = new Sender();
-        private string _filePath = null;
+        private string _dirPath = START_DIR;
+        private string _fileName;
         private bool _isChange;
+
+        public string FileName 
+        {
+            get => _fileName;
+
+            private set
+            {
+                _fileName = value;
+                saveFileDialog1.FileName = _fileName;
+            }
+        }
+        public string FilePath
+        {
+            get => _dirPath + FileName + ".340";
+
+            set 
+            { 
+                var packeges = value.Split('\\');
+                _dirPath = "";
+                for (int i = 0; i < packeges.Length-1; i++)
+                {
+                    _dirPath += packeges[i] + "\\";
+                }
+                FileName = packeges[packeges.Length - 1].Replace(".340", "");
+            }
+        }
+
 
         public MainForm()
         {
             InitializeComponent();
 
-            comboBox1.Items.Add(new CurveFormat("mini-Volts", "Kelvin"));
+            comboBox1.Items.Add(new CurveFormat("mVolts", "Kelvin"));
             comboBox1.Items.Add(new CurveFormat("Volts", "Kelvin"));
             comboBox1.Items.Add(new CurveFormat("Ohms", "Kelvin"));
         }
@@ -27,31 +55,18 @@ namespace ConfigCreater
             saveFileDialog1.Filter = "340 files (*.340)|*.340";
             openFileDialog1.Filter = "340 files (*.340)|*.340";
 
+
             textBox1.Text = "Curve Name";
             textBox2.Text = "";
             textBox4.Text = "325.5";
             comboBox1.SelectedItem = comboBox1.Items[0];
 
-            _isChange = false;
-        }
+            openFileDialog1.FileName = null;
 
-        private void openButton_Click(object sender, EventArgs e)
-        {
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                _filePath = openFileDialog1.FileName;
-                using (StreamReader reader = new StreamReader(new FileStream(_filePath, FileMode.Open)))
-                {
-                    dataGridView1.Rows.Clear();
-                    _config.Load(reader.ReadToEnd(), ref dataGridView1);
-                }
-                UpdateChart();
-                textBox1.Text = _config.SensorModel;
-                textBox2.Text = _config.SerialNumber;
-                textBox4.Text = _config.SetPoint;
-                comboBox1.SelectedIndex = _config.NumberDataFormat - 1;
-                _isChange = false;
-            }
+            saveFileDialog1.InitialDirectory = _dirPath;
+            openFileDialog1.InitialDirectory = _dirPath;
+
+            _isChange = false;
         }
 
         private void UpdateChart()
@@ -89,22 +104,6 @@ namespace ConfigCreater
             }
         }
 
-        private bool Save()
-        {
-            if (_filePath == null)
-            {
-                if (saveFileDialog1.ShowDialog() != DialogResult.OK) return false;
-
-                _filePath = saveFileDialog1.FileName;
-            }
-            using (StreamWriter writer = new StreamWriter(new FileStream(_filePath, FileMode.Create)))
-            {
-                writer.Write(_config.Save(dataGridView1));
-            }
-
-            _isChange = false;
-            return true;
-        }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -113,7 +112,7 @@ namespace ConfigCreater
                 var state = MessageBox.Show("Сохранить?", "Внимание", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
                 if (state == DialogResult.Yes)
                 {
-                    e.Cancel = !Save();
+                    Save();
                 }
                 else if (state == DialogResult.Cancel)
                 {
@@ -137,17 +136,6 @@ namespace ConfigCreater
         private void dataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             UpdateChart();
-        }
-
-        private void saveButton_Click(object sender, EventArgs e)
-        {
-            Save();
-        }
-
-        private void saveUsButton_Click(object sender, EventArgs e)
-        {
-            _filePath = null;
-            Save();
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -175,12 +163,12 @@ namespace ConfigCreater
             if (string.IsNullOrEmpty(e.FormattedValue.ToString()))
             {
                 e.Cancel = true;
-                dataGridView1.Rows[e.RowIndex].ErrorText = "the value mustn`t be a empty";
+                dataGridView1.Rows[e.RowIndex].ErrorText = "The value mustn`t be a empty";
             }
             if (!double.TryParse(e.FormattedValue.ToString().Replace(',', '.'), out double value))
             {
                 e.Cancel = true;
-                dataGridView1.Rows[e.RowIndex].ErrorText = "the value must be a double whit dot";
+                dataGridView1.Rows[e.RowIndex].ErrorText = "The value must be a double whit dot";
             }
         }
 
@@ -190,6 +178,11 @@ namespace ConfigCreater
 
             chart1.Titles[0].Text = textBox1.Text;
             _config.SensorModel = textBox1.Text;
+
+            if (_dirPath == START_DIR)
+            {
+                FileName = textBox1.Text;
+            }
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
@@ -206,9 +199,56 @@ namespace ConfigCreater
             _config.SetPoint = textBox4.Text;
         }
 
-        private void connectionButton_Click(object sender, EventArgs e)
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _sender.Host = textBox3.Text;
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                FilePath = openFileDialog1.FileName;
+                using (StreamReader reader = new StreamReader(new FileStream(FilePath, FileMode.Open)))
+                {
+                    dataGridView1.Rows.Clear();
+                    _config.Load(reader.ReadToEnd(), ref dataGridView1);
+                }
+                textBox1.Text = _config.SensorModel;
+                textBox2.Text = _config.SerialNumber;
+                textBox4.Text = _config.SetPoint;
+                comboBox1.SelectedIndex = _config.NumberDataFormat - 1;
+                UpdateChart();
+                _isChange = false;
+            }
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Save();
+        }
+
+        private void saveUsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                FilePath = saveFileDialog1.FileName;
+                Save();
+            }
+        }
+
+        private void Save()
+        {
+            using (StreamWriter writer = new StreamWriter(new FileStream(FilePath, FileMode.Create)))
+            {
+                writer.Write(_config.Save(dataGridView1));
+            }
+
+            _isChange = false;
+        }
+
+        private void sendToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_sender.Host == null)
+            {
+                openToolStripMenuItem_Click_1(sender, e);
+                return;
+            }
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -219,15 +259,22 @@ namespace ConfigCreater
                     var packages = filePath.Split('\\');
                     if (_sender.Send(steam, packages[packages.Length - 1]))
                     {
-                        MessageBox.Show($"Успешно\nОтправлен по пути{_sender.RemoteDirectory + "/" + packages[packages.Length - 1]}", "Файл успешно отправлен", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show($"Файл '{packages[packages.Length - 1]}' отправлен на контроллер!{_sender.RemoteDirectory + "/" + packages[packages.Length - 1]}", "Успешно", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     else
                     {
-                        MessageBox.Show("Ошибка", "Файл не отправлен", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Файл не отправлен, проверьте соединение с контроллером", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
 
                 }
             }
+        }
+
+        private void openToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            var connectionForm = new ConnectionForm(_sender);
+
+            connectionForm.Show();
         }
     }
 }
